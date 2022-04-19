@@ -17,8 +17,8 @@ public class Net {
         this.host = host;
         this.port = port;
         socket = new Socket(host, port);
-        is = new DataInputStream(socket.getInputStream());
-        os = new DataOutputStream(socket.getOutputStream());
+        is = new DataInputStream(socket.getInputStream());//read from socket
+        os = new DataOutputStream(socket.getOutputStream());//write to socket
     }
 
     public Long readLong() throws IOException {
@@ -27,5 +27,13 @@ public class Net {
 
     public String readUtf() throws IOException {
         return is.readUTF();
+    }
+
+    public void writeLong(int n) throws IOException {
+        os.writeLong(n);
+    }
+
+    public void writeUtf(String str) throws IOException {
+        os.writeUTF(str);
     }
 }

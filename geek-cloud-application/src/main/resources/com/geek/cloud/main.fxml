@@ -3,10 +3,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="563.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/18"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geek.cloud.controllers.MainController">
+<AnchorPane prefHeight="563.0" prefWidth="450.0"
+            xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.geek.cloud.controllers.MainController">
    <children>
-      <ListView fx:id = "view" layoutX="13.0" layoutY="8.0" prefHeight="488.0" prefWidth="424.0" />
-      <TextField fx:id = "input" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="496.0" prefHeight="47.0" prefWidth="424.0" />
+      <ListView fx:id="view" layoutX="13.0" layoutY="8.0"
+                prefHeight="436.0" prefWidth="424.0" />
+      <TextField fx:id="input" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="444.0" prefHeight="48.0" prefWidth="424.0" />
+      <Button layoutX="13.0" layoutY="492.0" mnemonicParsing="false" onAction="#writeFiles" prefHeight="48.0" prefWidth="424.0" text="SEND" />
    </children>
 </AnchorPane>
