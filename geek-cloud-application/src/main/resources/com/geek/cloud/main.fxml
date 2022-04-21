@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="563.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/16"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.geek.cloud.controllers.MainController">
+   <children>
+      <ListView fx:id="view" layoutX="13.0" layoutY="6.0" prefHeight="384.0" prefWidth="424.0" />
+      <TextField fx:id="input" alignment="CENTER_RIGHT" layoutX="13.0" layoutY="473.0" prefHeight="33.0" prefWidth="424.0" />
+      <Button layoutX="13.0" layoutY="507.0" mnemonicParsing="false" onAction="#sendFiles" prefHeight="33.0" prefWidth="424.0" text="SEND" />
+      <TextArea fx:id="downView" layoutX="13.0"
+                layoutY="390.0" prefHeight="83.0"
+                prefWidth="424.0" />
+
+   </children>
+</AnchorPane>
