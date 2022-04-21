@@ -1,10 +1,6 @@
 package com.geek.cloud;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,12 +17,4 @@ public class FileServer {
             new Thread(new FileMessageHandler(socket)).start(); //read/write thread start
         }
     }
-
-//    @Override
-//    public void start(Stage primaryStage) throws Exception {
-//        Parent parent = FXMLLoader.load(getClass().getResource("server.fxml"));
-//        primaryStage.setTitle("GEEK CLOUD");
-//        primaryStage.setScene(new Scene(parent));
-//        primaryStage.show();
-//    }
 }

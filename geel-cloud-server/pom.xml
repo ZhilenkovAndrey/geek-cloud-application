@@ -16,26 +16,4 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
-    <build>
-        <plugins>
-
-        </plugins>
-    </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>19-ea+4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx</artifactId>
-            <version>18</version>
-            <type>pom</type>
-        </dependency>
-
-    </dependencies>
-
 </project>

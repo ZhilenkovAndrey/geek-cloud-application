@@ -1,8 +1,8 @@
 package com.geek.cloud.network;
 
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -30,16 +30,8 @@ public class Net {
         return is.readUTF();
     }
 
-    public void writeLong(int n) throws IOException {
+    public void writeLong(Long n) throws IOException {
         os.writeLong(n);
     }
 
-    public void writeUtf(String str) throws IOException {
-        os.writeUTF(str);
-    }
-
-    public DataOutput getOs () {
-        return os;
-    }
-}
-
+    public void writeUtf(String str) throws IOException

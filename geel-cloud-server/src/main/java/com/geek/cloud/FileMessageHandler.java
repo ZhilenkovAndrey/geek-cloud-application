@@ -1,27 +1,20 @@
 package com.geek.cloud;
 
-import javafx.fxml.Initializable;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.nio.file.Path;
+import java.util.ArrayList;
 
-public class FileMessageHandler implements Runnable, Initializable {
+public class FileMessageHandler implements Runnable {
 
-    private final File dir;
+    private File dir = new File("files");
     private final DataInputStream is;
     private final DataOutputStream os;
-    public ListView<String> view;
+    private ArrayList<String> files1;
 
     public FileMessageHandler(Socket socket) throws IOException {
         is = new DataInputStream(socket.getInputStream());   //read from socket
-        os = new DataOutputStream(socket.getOutputStream()); //write to socket
-        dir = new File("files");                    //path to dir with files
+        os = new DataOutputStream(socket.getOutputStream());//write to socket
         String[] files = dir.list();                         //convert to string massive of files in path
         os.writeUTF("#list#");                           //write in stream command "#list#"
         os.writeLong(files.length);                          //write in stream length of file bytes
@@ -30,14 +23,17 @@ public class FileMessageHandler implements Runnable, Initializable {
         }
     }
 
-    private void readListFiles() {
-        try {
-            view.getItems().clear();//clearing view field
-            Long filesCount = is.readLong();//reading file length
-            for (int i = 0; i < filesCount; i++) {
-                String fileName = is.readUTF();//reading names of files
-                view.getItems().addAll(fileName);//put this names to view field
-            }
+    private void readListFiles() throws IOException {
+        String fileName = is.readUTF();
+        File file = new File(dir + fileName);
+        byte[] buf = new byte[1024];
+        long size = is.readLong();
+
+        try (OutputStream f = new FileOutputStream(file)) {
+              for (int i = 0; i < (size + 1024 - 1)/1024 ; i++) {
+                  int read = is.read(buf);
+                  f.write(buf, 0, read);
+              }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -45,20 +41,17 @@ public class FileMessageHandler implements Runnable, Initializable {
 
     @Override
     public void run() {
-        String utf = null;
         try {
             while (true) {
-                utf = is.readUTF();//read in utf incoming file
-                System.out.println(utf);
+                String command = is.readUTF();
+                if (command.equals("file")) {
+                    readListFiles();
+                }
+                os.writeUTF("file arrive");
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 }
 
