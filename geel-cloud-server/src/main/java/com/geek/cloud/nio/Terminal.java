@@ -76,9 +76,10 @@ public class Terminal {
 //            channel.write(ByteBuffer.wrap(new Realization().cdRealization().getBytes(StandardCharsets.UTF_8)));
 //        }
 //
-//        if (message.equals("touch" + dir.getFileName().toString())) {
-//            channel.write(ByteBuffer.wrap(new Realization().touchRealization().getBytes(StandardCharsets.UTF_8)));
-//        }
+        if (message.equals("touch")) {
+            String a = new Realization().touchRealization(dir);
+            channel.write(ByteBuffer.wrap(a.getBytes(StandardCharsets.UTF_8)));
+        }
 
         if (message.equals("mkdir")) {
             String a = new Realization().mkdirRealization();

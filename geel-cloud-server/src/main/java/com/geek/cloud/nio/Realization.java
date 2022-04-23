@@ -1,6 +1,5 @@
 package com.geek.cloud.nio;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,8 +15,16 @@ public class Realization {
 
     }
 
-    void touchRealization() {
-
+    String touchRealization(Path dir) {
+        String mess;
+        Path file = dir.resolve("newFile.txt");
+        try {
+            Files.createFile(file);
+            mess = "file create.\n\r -> ";
+        } catch (IOException e) {
+            mess = "file exist.\n\r -> ";
+        }
+        return mess;
     }
 
     String mkdirRealization() {
