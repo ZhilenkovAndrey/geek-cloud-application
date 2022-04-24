@@ -1,7 +1,6 @@
 package com.geek.cloud.nio;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
@@ -34,8 +33,16 @@ public class Realization {
         return a;
     }
 
-    void cdRealization() {
-
+    String cdRealization1(Path path) {
+        String a;
+        try {
+            Path absolutPath = path.toAbsolutePath();
+            path = absolutPath.resolve("..").normalize();
+            a = String.valueOf(path);
+        } catch (Exception e) {
+            a = "directory exist.\n\r -> ";
+        }
+        return a;
     }
 
     String touchRealization(Path dir) {
@@ -50,11 +57,10 @@ public class Realization {
         return mess;
     }
 
-    String mkdirRealization() {
+    String mkdirRealization(Path dir) {
         String mess;
-        Path dir = Path.of("serverFiles", "newDir");
         try {
-            Files.createDirectory(dir);
+            Files.createDirectory(Path.of(String.valueOf(dir), "newDir"));
             mess = "directory create\n\r -> ";
         } catch (IOException e) {
             mess = "directory exist.\n\r -> ";
@@ -62,10 +68,15 @@ public class Realization {
         return mess;
     }
 
-    String getLsResultString(Path dir) throws IOException {
-        return Files.list(dir)
-                .map(p -> p.getFileName().toString())
-                .collect(Collectors.joining("\n\r")) + "\n\r";
+    String getLsResultString(Path dir) {
+        String a;
+        try {
+            a = Files.list(dir)
+                    .map(p -> p.getFileName().toString())
+                    .collect(Collectors.joining("\n\r")) + "\n\r";
+        } catch (IOException e) {
+            a = "directory exist.\n\r -> ";
+        }
+        return a;
     }
-
 }
