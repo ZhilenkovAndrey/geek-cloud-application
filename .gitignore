@@ -1,2 +1,5 @@
 .idea
+geel-cloud-server/target
+geek-cloud-core/target
+geek-cloud-application/target
 geek-cloud.iml
