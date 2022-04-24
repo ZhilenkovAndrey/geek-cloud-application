@@ -1,14 +1,37 @@
 package com.geek.cloud.nio;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class Realization {
 
-    void catRealization(Path dir) {
+    String catRealization(String path) {
+        String a = "";
+        try {
+            SeekableByteChannel channel = Files.newByteChannel(Path.of(path));
+            ByteBuffer buff = ByteBuffer.allocate(1024);
+            while (true) {
+                int readCount = channel.read(buff);
 
+                if (readCount <= 0) break;
+                buff.flip();
+
+                while (buff.hasRemaining()) {
+                    a += (char) buff.get();
+                }
+                buff.clear();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            a = "no such file\n\r";
+        }
+        return a;
     }
 
     void cdRealization() {
@@ -33,7 +56,7 @@ public class Realization {
         try {
             Files.createDirectory(dir);
             mess = "directory create\n\r -> ";
-        } catch (IOException e){
+        } catch (IOException e) {
             mess = "directory exist.\n\r -> ";
         }
         return mess;

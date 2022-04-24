@@ -1,12 +1,14 @@
 package com.geek.cloud.nio;
 
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +19,8 @@ public class Terminal {
     private final Selector selector;
     private final ByteBuffer buffer = ByteBuffer.allocate(256);
     private Path dir;
+    private String a;
+    private RandomAccessFile file;
 
     public Terminal() throws IOException{
         dir = Path.of("serverFiles");
@@ -63,14 +67,18 @@ public class Terminal {
         System.out.println("Received: " + message);
 
         if (message.equals("ls")) {
-            channel.write(ByteBuffer.wrap(new Realization().getLsResultString(dir)
-                    .getBytes(StandardCharsets.UTF_8)));
+            channel.write(ByteBuffer.wrap(new Realization()
+                    .getLsResultString(dir).getBytes(StandardCharsets.UTF_8)));
             channel.write(ByteBuffer.wrap(" -> ".getBytes(StandardCharsets.UTF_8)));
         }
 
-//        if (message.equals("cat" + dir.getFileName().toString())) {
-//            channel.write(ByteBuffer.wrap(new Realization().catRealization().getBytes(StandardCharsets.UTF_8)));
-//        }
+        for (String f : dir.toFile().list()) {
+            if (message.equals(a = "cat " + f)) {
+                channel.write(ByteBuffer.wrap(new Realization()
+                        .catRealization(String.valueOf(Path.of(dir.toFile().getPath(), f)))
+                        .getBytes(StandardCharsets.UTF_8)));
+            }
+        }
 //
 //        if (message.equals("cd")) {
 //            channel.write(ByteBuffer.wrap(new Realization().cdRealization().getBytes(StandardCharsets.UTF_8)));
@@ -88,7 +96,8 @@ public class Terminal {
 
         else {
             try {
-                channel.write(ByteBuffer.wrap("Unknown command\n\r -> ".getBytes(StandardCharsets.UTF_8)));
+                channel.write(ByteBuffer.wrap("Unknown command\n\r -> "
+                        .getBytes(StandardCharsets.UTF_8)));
             } catch (ClosedChannelException e) {
                 System.out.println("Client disconected...");
             }
