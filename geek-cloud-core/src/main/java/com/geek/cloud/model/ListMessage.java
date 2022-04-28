@@ -8,7 +8,6 @@ import java.util.List;
 
 @Getter
 public class ListMessage extends AbstractMessage {
-
     private final List<String> files;
 
     public ListMessage(Path path) throws IOException {

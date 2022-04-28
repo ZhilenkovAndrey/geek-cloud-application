@@ -3,7 +3,8 @@ package com.geek.cloud.model;
 public enum MessageType {
 
     FILE("file"),
-    LIST("list");
+    LIST("list"),
+    FILE_REQUEST("fileRequest");
 
     private final String name;
 
