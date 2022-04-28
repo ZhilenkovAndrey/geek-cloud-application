@@ -29,5 +29,6 @@ public class Net {
 
     public void write(AbstractMessage message) throws IOException {
         os.writeObject(message);
+        os.flush();
     }
 }
