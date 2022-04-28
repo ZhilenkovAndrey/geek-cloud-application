@@ -6,12 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class Main extends Application{
+public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent parent = FXMLLoader.load(getClass().getResource("main.fxml"));
-        primaryStage.setTitle("GEEK CLOUD");
         primaryStage.setScene(new Scene(parent));
         primaryStage.show();
     }
