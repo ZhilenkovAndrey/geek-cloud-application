@@ -2,13 +2,11 @@ package com.geek.cloud.netty.serialization;
 
 import com.geek.cloud.model.AbstractMessage;
 import com.geek.cloud.model.FileMessage;
-import com.geek.cloud.model.FileRequest;
 import com.geek.cloud.model.ListMessage;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -34,7 +32,7 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
         }
 
         if (msg instanceof ListMessage lm) {
-            FileMessage file = new FileMessage((Path) msg);
+            FileMessage file = new FileMessage((Path) lm);
             Files.write(clientDir.resolve(file.getName()), file.getBytes());
             ctx.writeAndFlush(new ListMessage(clientDir));
         }
