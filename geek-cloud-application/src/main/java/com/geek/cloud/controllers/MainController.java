@@ -2,7 +2,6 @@ package com.geek.cloud.controllers;
 
 import com.geek.cloud.model.AbstractMessage;
 import com.geek.cloud.model.FileMessage;
-import com.geek.cloud.model.FileRequest;
 import com.geek.cloud.model.ListMessage;
 import com.geek.cloud.network.Net;
 import javafx.event.ActionEvent;
@@ -67,6 +66,6 @@ public class MainController implements Initializable {
 
     public void download(ActionEvent actionEvent) throws Exception {
         String fileName = serverView.getSelectionModel().getSelectedItem();
-        net.write(new FileRequest(Path.of(fileName)));
+        net.write(new FileMessage(Path.of(fileName)));
     }
 }
