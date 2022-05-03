@@ -31,7 +31,10 @@ public class MainController implements Initializable {
                     serverView.getItems().clear();
                     serverView.getItems().addAll(lm.getFiles());
                 }
-                if (message instanceof FileMessage) getClientFiles();
+                if (message instanceof DownloadMessage) {
+                    clientView.getItems().clear();
+                    clientView.getItems().addAll(getClientFiles());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
