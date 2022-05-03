@@ -1,6 +1,7 @@
 package com.geek.cloud.controllers;
 
 import com.geek.cloud.model.AbstractMessage;
+import com.geek.cloud.model.DownloadMessage;
 import com.geek.cloud.model.FileMessage;
 import com.geek.cloud.model.ListMessage;
 import com.geek.cloud.network.Net;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
     private Path clientDir;
-//    private final Path serverDir = Path.of("serverFiles");
+    private Path serverDir = Path.of("serverFiles");
     public ListView<String> clientView;
     public ListView<String> serverView;
     private Net net;
@@ -30,6 +31,7 @@ public class MainController implements Initializable {
                     serverView.getItems().clear();
                     serverView.getItems().addAll(lm.getFiles());
                 }
+                if (message instanceof FileMessage) getClientFiles();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,6 +68,6 @@ public class MainController implements Initializable {
 
     public void download(ActionEvent actionEvent) throws Exception {
         String fileName = serverView.getSelectionModel().getSelectedItem();
-        net.write(new FileMessage(Path.of(fileName)));
+        net.write(new DownloadMessage(fileName));
     }
 }

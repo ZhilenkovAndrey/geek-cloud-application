@@ -23,7 +23,7 @@ public class NettyServer {
 
             ChannelFuture channelFuture = bootstrap.bind(8189)
                     .sync();
-            log.info("\n\n  Server started...");
+            log.info("Server started...");
             channelFuture.channel()
                     .closeFuture()
                     .sync();
