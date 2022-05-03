@@ -33,10 +33,9 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
         }
 
         if (msg instanceof DownloadMessage downloadMessage) {
-//            Files.createFile(clientDir.resolve(downloadMessage.getName()));
             Files.copy(serverDir.resolve(downloadMessage.getName()),
                     clientDir.resolve(downloadMessage.getName()));
-            ctx.writeAndFlush(new FileMessage(clientDir));
+            ctx.writeAndFlush(new DownloadMessage(downloadMessage.getName()));
         }
     }
 }
