@@ -4,7 +4,8 @@ public enum MessageType {
 
     FILE("file"),
     LIST("list"),
-    FILE_REQUEST("fileRequest");
+    DOWNLOAD("download"),
+    DELETE("delete");
 
     private final String name;
 

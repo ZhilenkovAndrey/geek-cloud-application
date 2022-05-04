@@ -1,9 +1,6 @@
 package com.geek.cloud.controllers;
 
-import com.geek.cloud.model.AbstractMessage;
-import com.geek.cloud.model.DownloadMessage;
-import com.geek.cloud.model.FileMessage;
-import com.geek.cloud.model.ListMessage;
+import com.geek.cloud.model.*;
 import com.geek.cloud.network.Net;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -31,9 +28,15 @@ public class MainController implements Initializable {
                     serverView.getItems().clear();
                     serverView.getItems().addAll(lm.getFiles());
                 }
+
                 if (message instanceof DownloadMessage) {
                     clientView.getItems().clear();
                     clientView.getItems().addAll(getClientFiles());
+                }
+
+                if (message instanceof DeleteMessageFromServer) {
+                    serverView.getItems().clear();
+                    serverView.getItems().addAll(new ListMessage(serverDir).getFiles());
                 }
             }
         } catch (Exception e) {
@@ -72,5 +75,10 @@ public class MainController implements Initializable {
     public void download(ActionEvent actionEvent) throws Exception {
         String fileName = serverView.getSelectionModel().getSelectedItem();
         net.write(new DownloadMessage(fileName));
+    }
+
+    public void deleteFromServer(ActionEvent actionEvent) throws IOException {
+        String fileName = serverView.getSelectionModel().getSelectedItem();
+        net.write(new DeleteMessageFromServer(fileName));
     }
 }
