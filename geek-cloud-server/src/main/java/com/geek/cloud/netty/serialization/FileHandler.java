@@ -1,9 +1,6 @@
 package com.geek.cloud.netty.serialization;
 
-import com.geek.cloud.model.AbstractMessage;
-import com.geek.cloud.model.DownloadMessage;
-import com.geek.cloud.model.FileMessage;
-import com.geek.cloud.model.ListMessage;
+import com.geek.cloud.model.*;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +33,12 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
             Files.copy(serverDir.resolve(downloadMessage.getName()),
                     clientDir.resolve(downloadMessage.getName()));
             ctx.writeAndFlush(new DownloadMessage(downloadMessage.getName()));
+        }
+
+        if (msg instanceof DeleteMessageFromServer deleteMessage) {
+            Files.delete(serverDir.resolve(deleteMessage.getName()));
+            ctx.writeAndFlush(new ListMessage(serverDir));
+
         }
     }
 }
