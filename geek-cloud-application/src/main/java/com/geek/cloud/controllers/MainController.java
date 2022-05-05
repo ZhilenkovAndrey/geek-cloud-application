@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.ResourceBundle;
 
+
 public class MainController implements Initializable {
     private Path clientDir;
     private Path serverDir = Path.of("serverFiles");
