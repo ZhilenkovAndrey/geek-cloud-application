@@ -5,8 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 
 @Slf4j
 public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
@@ -35,10 +34,21 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
             ctx.writeAndFlush(new DownloadMessage(downloadMessage.getName()));
         }
 
-        if (msg instanceof DeleteMessageFromServer deleteMessage) {
-            Files.delete(serverDir.resolve(deleteMessage.getName()));
+        if (msg instanceof DeleteMessageFromServer deleteMessageFromServer) {
+            Files.delete(serverDir.resolve(deleteMessageFromServer.getName()));
             ctx.writeAndFlush(new ListMessage(serverDir));
+        }
 
+        if (msg instanceof DeleteMessageFromClient deleteMessageFromClient) {
+            Files.delete(clientDir.resolve(deleteMessageFromClient.getName()));
+            ctx.writeAndFlush(new DeleteMessageFromClient(deleteMessageFromClient.getName()));
+        }
+
+        if (msg instanceof CdDirectory cdDirectory) {
+            if (cdDirectory.getPath().getParent() != null) {
+                ctx.writeAndFlush(new CdDirectory(
+                        cdDirectory.getPath().getParent()));
+            }
         }
     }
 }

@@ -24,19 +24,18 @@ public class MainController implements Initializable {
         try {
             while (true) {
                 AbstractMessage message = net.read();
-                if (message instanceof ListMessage lm) {
-                    serverView.getItems().clear();
-                    serverView.getItems().addAll(lm.getFiles());
+                if ((message instanceof ListMessage) ||
+                    (message instanceof CdDirectory) ||
+                    (message instanceof DeleteMessageFromServer)) {
+                        serverView.getItems().clear();
+                        serverView.getItems().addAll(
+                                (new ListMessage(serverDir)).getFiles());
                 }
 
-                if (message instanceof DownloadMessage) {
-                    clientView.getItems().clear();
-                    clientView.getItems().addAll(getClientFiles());
-                }
-
-                if (message instanceof DeleteMessageFromServer) {
-                    serverView.getItems().clear();
-                    serverView.getItems().addAll(new ListMessage(serverDir).getFiles());
+                if ((message instanceof DownloadMessage) ||
+                    (message instanceof DeleteMessageFromClient)){
+                        clientView.getItems().clear();
+                        clientView.getItems().addAll(getClientFiles());
                 }
             }
         } catch (Exception e) {
@@ -73,12 +72,21 @@ public class MainController implements Initializable {
     }
 
     public void download(ActionEvent actionEvent) throws Exception {
-        String fileName = serverView.getSelectionModel().getSelectedItem();
-        net.write(new DownloadMessage(fileName));
+        net.write(new DownloadMessage(
+                serverView.getSelectionModel().getSelectedItem()));
     }
 
-    public void deleteFromServer(ActionEvent actionEvent) throws IOException {
-        String fileName = serverView.getSelectionModel().getSelectedItem();
-        net.write(new DeleteMessageFromServer(fileName));
+    public void deleteMessageFromServer(ActionEvent actionEvent) throws IOException {
+        net.write(new DeleteMessageFromServer(
+                serverView.getSelectionModel().getSelectedItem()));
+    }
+
+    public void deleteMessageFromClient(ActionEvent actionEvent) throws IOException {
+        net.write(new DeleteMessageFromClient(
+                clientView.getSelectionModel().getSelectedItem()));
+    }
+
+    public void cdDirectory(ActionEvent actionEvent) throws IOException {
+        net.write(new CdDirectory(clientDir));
     }
 }

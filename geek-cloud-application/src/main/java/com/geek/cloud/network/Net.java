@@ -18,7 +18,7 @@ public class Net {
     public Net(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
-        socket = new Socket(host, port);
+            socket = new Socket(host, port);
         os = new ObjectEncoderOutputStream(socket.getOutputStream());
         is = new ObjectDecoderInputStream(socket.getInputStream());
     }

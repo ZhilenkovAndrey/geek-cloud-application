@@ -5,7 +5,9 @@ public enum MessageType {
     FILE("file"),
     LIST("list"),
     DOWNLOAD("download"),
-    DELETE("delete");
+    DELETE("delete"),
+    CD("CdDirectory");
+
 
     private final String name;
 
