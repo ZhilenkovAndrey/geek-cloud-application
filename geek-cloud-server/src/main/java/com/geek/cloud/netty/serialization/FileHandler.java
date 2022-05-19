@@ -48,6 +48,8 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
             if (cdDirectory.getPath().getParent() != null) {
                 ctx.writeAndFlush(new CdDirectory(
                         cdDirectory.getPath().getParent()));
+                ctx.writeAndFlush(new ListMessage(
+                        cdDirectory.getPath().getParent()));
             }
         }
     }

@@ -3,12 +3,28 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="558.0" prefWidth="710.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geek.cloud.controllers.MainController">
-   <ListView fx:id="clientView" layoutX="28.0" layoutY="31.0" prefHeight="496.0" prefWidth="274.0" />
-   <ListView fx:id="serverView" layoutX="403.0" layoutY="31.0" prefHeight="496.0" prefWidth="274.0" />
-   <Button layoutX="317.0" layoutY="99.0" mnemonicParsing="false" onAction="#upload" prefHeight="58.0" prefWidth="75.0" text="upload" />
-   <Button layoutX="317.0" layoutY="166.0" mnemonicParsing="false" onAction="#download" prefHeight="58.0" prefWidth="75.0" text="download" />
-   <Button layoutX="317.0" layoutY="240.0" mnemonicParsing="false" onAction="#deleteMessageFromServer" prefHeight="58.0" prefWidth="75.0" text="delServer" />
-   <Button layoutX="317.0" layoutY="31.0" mnemonicParsing="false" onAction="#cdDirectory" prefHeight="58.0" prefWidth="75.0" text="upPath" />
-   <Button layoutX="317.0" layoutY="309.0" mnemonicParsing="false" onAction="#deleteMessageFromClient" prefHeight="58.0" prefWidth="75.0" text="delClient" />
+<AnchorPane prefHeight="558.0" prefWidth="894.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.geek.cloud.controllers.MainController">
+    <ListView fx:id="clientView" layoutX="28.0" layoutY="103.0" prefHeight="424.0" prefWidth="373.0" />
+    <ListView fx:id="serverView" layoutX="499.0" layoutY="103.0" prefHeight="416.0" prefWidth="360.0">
+
+    </ListView>
+    <Button layoutX="410.0" layoutY="208.0" mnemonicParsing="false" onAction="#upload" prefHeight="58.0" prefWidth="82.0" text="upload" />
+    <Button layoutX="410.0" layoutY="293.0" mnemonicParsing="false" onAction="#download" prefHeight="58.0" prefWidth="82.0" text="download" />
+    <Button layoutX="410.0" layoutY="380.0" mnemonicParsing="false" onAction="#deleteMessageFromServer" prefHeight="58.0" prefWidth="82.0" text="delServer" />
+    <Button layoutX="410.0" layoutY="461.0" mnemonicParsing="false" onAction="#deleteMessageFromClient" prefHeight="58.0" prefWidth="82.0" text="delClient" />
+
+    <MenuBar layoutX="13.0" layoutY="14.0">
+        <Menu text="File">
+            <MenuItem onAction="#exitButton" text="Quit" />
+        </Menu>
+    </MenuBar>
+
+    <ComboBox fx:id="clientDisks" layoutX="29.0" layoutY="49.0" prefHeight="25.0" prefWidth="64.0" />
+    <TextField fx:id="pathToFileClient" editable="false" layoutX="96.0" layoutY="48.0" prefHeight="28.0" prefWidth="273.0" />
+    <Button layoutX="370.0" layoutY="49.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
+
+    <ComboBox fx:id="serverDisks" layoutX="497.0" layoutY="49.0" prefHeight="28.0" prefWidth="64.0" />
+    <TextField fx:id="pathToFileServer" editable="false" layoutX="563.0" layoutY="49.0" prefHeight="28.0" prefWidth="259.0" />
+    <Button layoutX="825.0" layoutY="51.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
+
 </AnchorPane>
