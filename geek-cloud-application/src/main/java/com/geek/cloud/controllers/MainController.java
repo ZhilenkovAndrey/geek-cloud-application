@@ -4,23 +4,26 @@ import com.geek.cloud.model.*;
 import com.geek.cloud.network.Net;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-
+import javafx.scene.input.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
+
 
 public class MainController implements Initializable {
 
-    private Path clientDir;
+    private Path clientDir = Path.of("clientFiles");
+    ;
     private Path serverDir = Path.of("serverFiles");
     public ListView<String> clientView;
     public ListView<String> serverView;
@@ -36,30 +39,23 @@ public class MainController implements Initializable {
 
     private void read() {
         pathToFileServer.setText(serverDir.normalize().toAbsolutePath().toString());
-
-        serverDisks.getItems().clear();
-        for (Path p : FileSystems.getDefault().getRootDirectories()) {
-            serverDisks.getItems().add(p.toString());
-        }
-        serverDisks.getSelectionModel().select(0);
+        updatePathLine(serverDisks);
 
         try {
+            openDirectory(serverView, pathToFileServer);
+
             while (true) {
                 AbstractMessage message = net.read();
+
                 if ((message instanceof ListMessage) ||
-                    (message instanceof CdDirectory) ||
-                    (message instanceof DeleteMessageFromServer)) {
-                        serverView.getItems().clear();
-                        serverView.getItems().addAll(
-                                (new ListMessage(serverDir)).getFiles());
-                        serverView.getItems().sort(String::compareTo);
+                        (message instanceof CdDirectory) ||
+                        (message instanceof DeleteMessageFromServer)) {
+                    updateView(serverView, pathToFileServer);
                 }
 
                 if ((message instanceof DownloadMessage) ||
-                    (message instanceof DeleteMessageFromClient)){
-                        clientView.getItems().clear();
-                        clientView.getItems().addAll(getClientFiles());
-                        clientView.getItems().sort(String::compareTo);
+                        (message instanceof DeleteMessageFromClient)) {
+                    updateView(clientView, pathToFileClient);
                 }
             }
         } catch (Exception e) {
@@ -67,29 +63,16 @@ public class MainController implements Initializable {
         }
     }
 
-    private List<String> getClientFiles() throws IOException {
-        return Files.list(clientDir)
-                .map(Path::getFileName)
-                .map(Path::toString)
-                .toList();
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        pathToFileClient.setText(clientDir.normalize().toAbsolutePath().toString());
         try {
-            clientDir = Path.of("clientFiles");
-            pathToFileClient.setText(clientDir.normalize().toAbsolutePath().toString());
-            clientView.getItems().clear();
-            clientView.getItems().addAll(getClientFiles());
-            clientView.getItems().sort(String::compareTo);
+            updatePathLine(clientDisks);
+            updateView(clientView, pathToFileClient);
+            openDirectory(clientView, pathToFileClient);
 
             net = new Net("localhost", 8189);
-
-            clientDisks.getItems().clear();
-            for (Path p : FileSystems.getDefault().getRootDirectories()) {
-                clientDisks.getItems().add(p.toString());
-            }
-            clientDisks.getSelectionModel().select(0);
 
             Thread.sleep(300);
             Thread readThread = new Thread(this::read);
@@ -98,6 +81,20 @@ public class MainController implements Initializable {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updatePathLine(ComboBox<String> line) {
+        line.getItems().clear();
+        for (Path p : FileSystems.getDefault().getRootDirectories()) {
+            line.getItems().add(p.toString());
+        }
+        line.getSelectionModel().select(0);
+    }
+
+    private void updateView(ListView<String> someView, TextField pathToFile) throws IOException {
+        someView.getItems().clear();
+        someView.getItems().addAll((new ListMessage(Path.of(pathToFile.getText()))).getFiles());
+        someView.getItems().sort(String::compareTo);
     }
 
     public void upload(ActionEvent actionEvent) throws IOException {
@@ -120,8 +117,52 @@ public class MainController implements Initializable {
                 clientView.getSelectionModel().getSelectedItem()));
     }
 
-    public void cdDirectory(ActionEvent actionEvent) throws IOException {
-        net.write(new CdDirectory(clientDir));
+    public void pathUpClient(ActionEvent actionEvent) throws IOException {
+        Path path = Paths.get(pathToFileClient.getText()).getParent();
+        if (path != null) {
+            pathToFileClient.setText(String.valueOf(path));
+            updateView(clientView, pathToFileClient);
+        }
+    }
+
+    public void pathUpServer(ActionEvent actionEvent) throws IOException {
+        Path path = Paths.get(pathToFileServer.getText()).getParent();
+        if (path != null) {
+            pathToFileServer.setText(String.valueOf(path));
+            updateView(serverView, pathToFileServer);
+        }
+    }
+
+    public void changeClientDisk(ActionEvent actionEvent) throws IOException {
+        ComboBox<String> a = (ComboBox<String>) actionEvent.getSource();
+        pathToFileClient.setText(a.getSelectionModel().getSelectedItem());
+        updateView(clientView, pathToFileClient);
+    }
+
+    public void changeServerDisk(ActionEvent actionEvent) throws IOException {
+        ComboBox<String> a = (ComboBox<String>) actionEvent.getSource();
+        pathToFileServer.setText(a.getSelectionModel().getSelectedItem());
+        updateView(serverView, pathToFileServer);
+    }
+
+    private void openDirectory(ListView<String> someView, TextField pathToDirectory) throws IOException {
+        someView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    Path path = Paths.get(pathToDirectory.getText())
+                            .resolve(someView.getSelectionModel().getSelectedItem());
+                    if (Files.isDirectory(path)) {
+                        try {
+                            pathToDirectory.setText(String.valueOf(path));
+                            updateView(someView, pathToDirectory);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     public void exitButton(ActionEvent actionEvent) throws IOException {

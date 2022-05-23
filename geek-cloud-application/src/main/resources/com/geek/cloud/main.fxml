@@ -19,12 +19,12 @@
         </Menu>
     </MenuBar>
 
-    <ComboBox fx:id="clientDisks" layoutX="29.0" layoutY="49.0" prefHeight="25.0" prefWidth="64.0" />
+    <ComboBox fx:id="clientDisks" onAction="#changeClientDisk" layoutX="29.0" layoutY="49.0" prefHeight="25.0" prefWidth="64.0" />
     <TextField fx:id="pathToFileClient" editable="false" layoutX="96.0" layoutY="48.0" prefHeight="28.0" prefWidth="273.0" />
-    <Button layoutX="370.0" layoutY="49.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
+    <Button onAction="#pathUpClient" layoutX="370.0" layoutY="49.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
 
-    <ComboBox fx:id="serverDisks" layoutX="497.0" layoutY="49.0" prefHeight="28.0" prefWidth="64.0" />
+    <ComboBox fx:id="serverDisks" onAction="#changeServerDisk" layoutX="497.0" layoutY="49.0" prefHeight="28.0" prefWidth="64.0" />
     <TextField fx:id="pathToFileServer" editable="false" layoutX="563.0" layoutY="49.0" prefHeight="28.0" prefWidth="259.0" />
-    <Button layoutX="825.0" layoutY="51.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
+    <Button onAction="#pathUpServer" layoutX="825.0" layoutY="51.0" prefHeight="25.0" prefWidth="31.0" text="Up" />
 
 </AnchorPane>
