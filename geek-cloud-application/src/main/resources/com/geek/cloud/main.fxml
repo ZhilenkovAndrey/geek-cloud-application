@@ -8,10 +8,10 @@
     <ListView fx:id="serverView" layoutX="499.0" layoutY="103.0" prefHeight="416.0" prefWidth="360.0">
 
     </ListView>
-    <Button layoutX="410.0" layoutY="208.0" mnemonicParsing="false" onAction="#upload" prefHeight="58.0" prefWidth="82.0" text="upload" />
-    <Button layoutX="410.0" layoutY="293.0" mnemonicParsing="false" onAction="#download" prefHeight="58.0" prefWidth="82.0" text="download" />
-    <Button layoutX="410.0" layoutY="380.0" mnemonicParsing="false" onAction="#deleteMessageFromServer" prefHeight="58.0" prefWidth="82.0" text="delServer" />
-    <Button layoutX="410.0" layoutY="461.0" mnemonicParsing="false" onAction="#deleteMessageFromClient" prefHeight="58.0" prefWidth="82.0" text="delClient" />
+    <Button layoutX="410.0" layoutY="208.0" mnemonicParsing="false" onAction="#uploadToServer" prefHeight="58.0" prefWidth="82.0" text="upload" />
+    <Button layoutX="410.0" layoutY="293.0" mnemonicParsing="false" onAction="#downloadFromServer" prefHeight="58.0" prefWidth="82.0" text="download" />
+    <Button layoutX="410.0" layoutY="380.0" mnemonicParsing="false" onAction="#deleteFromServer" prefHeight="58.0" prefWidth="82.0" text="delServer" />
+    <Button layoutX="410.0" layoutY="461.0" mnemonicParsing="false" onAction="#deleteFromClient" prefHeight="58.0" prefWidth="82.0" text="delClient" />
 
     <MenuBar layoutX="13.0" layoutY="14.0">
         <Menu text="File">

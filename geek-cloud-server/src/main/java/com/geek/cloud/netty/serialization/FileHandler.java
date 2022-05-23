@@ -10,8 +10,8 @@ import java.nio.file.*;
 @Slf4j
 public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
 
-    private final Path serverDir = Path.of("serverFiles");
-    private final Path clientDir = Path.of("clientFiles");
+    private Path serverDir = Path.of("serverFiles");
+    private Path clientDir = Path.of("clientFiles");
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -42,15 +42,6 @@ public class FileHandler extends SimpleChannelInboundHandler<AbstractMessage> {
         if (msg instanceof DeleteMessageFromClient deleteMessageFromClient) {
             Files.delete(clientDir.resolve(deleteMessageFromClient.getName()));
             ctx.writeAndFlush(new DeleteMessageFromClient(deleteMessageFromClient.getName()));
-        }
-
-        if (msg instanceof CdDirectory cdDirectory) {
-            if (cdDirectory.getPath().getParent() != null) {
-                ctx.writeAndFlush(new CdDirectory(
-                        cdDirectory.getPath().getParent()));
-                ctx.writeAndFlush(new ListMessage(
-                        cdDirectory.getPath().getParent()));
-            }
         }
     }
 }

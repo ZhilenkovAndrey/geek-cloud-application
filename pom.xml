@@ -6,7 +6,7 @@
     <groupId>geek-cloud-application</groupId>
     <artifactId>com.geek.cloud</artifactId>
     <packaging>pom</packaging>
-    <version>1</version>
+    <version>1.SNAPSHOT</version>
     <modules>
         <module>geek-cloud-core</module>
         <module>geek-cloud-server</module>

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>com.geek.cloud</artifactId>
         <groupId>geek-cloud-application</groupId>
-        <version>1</version>
+        <version>1.SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,12 +15,6 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
-
-    <build>
-        <plugins>
-
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
@@ -41,7 +35,7 @@
         <dependency>
             <groupId>geek-cloud-application</groupId>
             <artifactId>geek-cloud-core</artifactId>
-            <version>1</version>
+            <version>1.SNAPSHOT</version>
         </dependency>
     </dependencies>
 

@@ -22,9 +22,7 @@ import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
 
-    private Path clientDir = Path.of("clientFiles");
-    ;
-    private Path serverDir = Path.of("serverFiles");
+
     public ListView<String> clientView;
     public ListView<String> serverView;
     private Net net;
@@ -33,12 +31,13 @@ public class MainController implements Initializable {
     @FXML
     private ComboBox<String> serverDisks;
     @FXML
-    private TextField pathToFileClient;
+    public TextField pathToFileClient;
     @FXML
-    private TextField pathToFileServer;
+    public TextField pathToFileServer;
 
     private void read() {
-        pathToFileServer.setText(serverDir.normalize().toAbsolutePath().toString());
+
+        pathToFileServer.setText(Path.of("serverFiles").normalize().toAbsolutePath().toString());
         updatePathLine(serverDisks);
 
         try {
@@ -48,14 +47,14 @@ public class MainController implements Initializable {
                 AbstractMessage message = net.read();
 
                 if ((message instanceof ListMessage) ||
-                        (message instanceof CdDirectory) ||
-                        (message instanceof DeleteMessageFromServer)) {
-                    updateView(serverView, pathToFileServer);
+                    (message instanceof DeleteMessageFromServer)) {
+                        updateView(serverView, pathToFileServer);
                 }
 
                 if ((message instanceof DownloadMessage) ||
-                        (message instanceof DeleteMessageFromClient)) {
-                    updateView(clientView, pathToFileClient);
+                    (message instanceof FileMessage) ||
+                    (message instanceof DeleteMessageFromClient)) {
+                        updateView(clientView, pathToFileClient);
                 }
             }
         } catch (Exception e) {
@@ -65,8 +64,8 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        pathToFileClient.setText(Path.of("clientFiles").normalize().toAbsolutePath().toString());
 
-        pathToFileClient.setText(clientDir.normalize().toAbsolutePath().toString());
         try {
             updatePathLine(clientDisks);
             updateView(clientView, pathToFileClient);
@@ -97,22 +96,22 @@ public class MainController implements Initializable {
         someView.getItems().sort(String::compareTo);
     }
 
-    public void upload(ActionEvent actionEvent) throws IOException {
+    public void uploadToServer(ActionEvent actionEvent) throws IOException {
         String fileName = clientView.getSelectionModel().getSelectedItem();
-        net.write(new FileMessage(clientDir.resolve(fileName)));
+        net.write(new FileMessage(Path.of(pathToFileClient.getText()).resolve(fileName)));
     }
 
-    public void download(ActionEvent actionEvent) throws Exception {
+    public void downloadFromServer(ActionEvent actionEvent) throws Exception {
         net.write(new DownloadMessage(
                 serverView.getSelectionModel().getSelectedItem()));
     }
 
-    public void deleteMessageFromServer(ActionEvent actionEvent) throws IOException {
+    public void deleteFromServer(ActionEvent actionEvent) throws IOException {
         net.write(new DeleteMessageFromServer(
                 serverView.getSelectionModel().getSelectedItem()));
     }
 
-    public void deleteMessageFromClient(ActionEvent actionEvent) throws IOException {
+    public void deleteFromClient(ActionEvent actionEvent) throws IOException {
         net.write(new DeleteMessageFromClient(
                 clientView.getSelectionModel().getSelectedItem()));
     }
@@ -130,6 +129,7 @@ public class MainController implements Initializable {
         if (path != null) {
             pathToFileServer.setText(String.valueOf(path));
             updateView(serverView, pathToFileServer);
+
         }
     }
 
@@ -165,7 +165,7 @@ public class MainController implements Initializable {
         });
     }
 
-    public void exitButton(ActionEvent actionEvent) throws IOException {
+    public void exitButton(ActionEvent actionEvent) {
         Platform.exit();
     }
 }
