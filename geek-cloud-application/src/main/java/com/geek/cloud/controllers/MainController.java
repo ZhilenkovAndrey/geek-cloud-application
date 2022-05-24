@@ -1,108 +1,171 @@
 package com.geek.cloud.controllers;
 
+import com.geek.cloud.model.*;
 import com.geek.cloud.network.Net;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-
-import java.io.File;
-import java.io.FileInputStream;
+import javafx.scene.input.MouseEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
+
 
 public class MainController implements Initializable {
 
-    private File dir = new File("clientFiles");;
-    private String sendCommand;
+
+    public ListView<String> clientView;
+    public ListView<String> serverView;
     private Net net;
-    public ListView<String> view;
-    public TextField input;
-    public TextArea downView;
-    private String[] files;
-
-    private void readListFiles() {
-        try {
-            view.getItems().clear();//clearing view field
-            Long filesCount = net.readLong();//reading file length
-            for (int i = 0; i < filesCount; i++) {
-                String fileName = net.readUtf();//reading names of files
-                view.getItems().addAll(fileName);//put this names to view field
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void printMessage(String message) throws IOException {
-        downView.clear();
-        downView.setText(message);
-    }
+    @FXML
+    private ComboBox<String> clientDisks;
+    @FXML
+    private ComboBox<String> serverDisks;
+    @FXML
+    public TextField pathToFileClient;
+    @FXML
+    public TextField pathToFileServer;
 
     private void read() {
+
+        pathToFileServer.setText(Path.of("serverFiles").normalize().toAbsolutePath().toString());
+        updatePathLine(serverDisks);
+
         try {
+            openDirectory(serverView, pathToFileServer);
+
             while (true) {
-                String command = net.readUtf(); //reading socket
-                if (command.equals("#list#")) { //waiting command to read file names
-                    readListFiles();            // files in view
-                } else {
-                    printMessage(command);
+                AbstractMessage message = net.read();
+
+                if ((message instanceof ListMessage) ||
+                    (message instanceof DeleteMessageFromServer)) {
+                        updateView(serverView, pathToFileServer);
+                }
+
+                if ((message instanceof DownloadMessage) ||
+                    (message instanceof FileMessage) ||
+                    (message instanceof DeleteMessageFromClient)) {
+                        updateView(clientView, pathToFileClient);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void sendFiles() throws IOException {
-        sendCommand = input.getText();
-        files = dir.list();
-
-        for (String fileName : files) {
-            if (sendCommand.equals(fileName)) {
-
-                net.writeUtf("file");
-                net.writeUtf(fileName);
-                net.writeLong(fileName.length());
-                byte[] buf = new byte[1024];
-                File file = dir.toPath().resolve(fileName).toFile();
-
-                try (InputStream f = new FileInputStream(file)) {
-                    while (f.available() > 0) {
-                        int read = f.read(buf);
-                        net.getOs().write(buf, 0, read);
-                    }
-                }
-                input.clear();
-//                net.getOs().flush();
-            }
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        pathToFileClient.setText(Path.of("clientFiles").normalize().toAbsolutePath().toString());
 
         try {
+            updatePathLine(clientDisks);
+            updateView(clientView, pathToFileClient);
+            openDirectory(clientView, pathToFileClient);
+
             net = new Net("localhost", 8189);
 
+            Thread.sleep(300);
             Thread readThread = new Thread(this::read);
             readThread.setDaemon(true);
             readThread.start();
-
-            downView.setEditable(false);
-            files = dir.list();
-
-            for (String file : files) {
-                downView.appendText(file + "\n");
-                System.out.println(file);
-            }
-
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updatePathLine(ComboBox<String> line) {
+        line.getItems().clear();
+        for (Path p : FileSystems.getDefault().getRootDirectories()) {
+            line.getItems().add(p.toString());
+        }
+        line.getSelectionModel().select(0);
+    }
+
+    private void updateView(ListView<String> someView, TextField pathToFile) throws IOException {
+        someView.getItems().clear();
+        someView.getItems().addAll((new ListMessage(Path.of(pathToFile.getText()))).getFiles());
+        someView.getItems().sort(String::compareTo);
+    }
+
+    public void uploadToServer(ActionEvent actionEvent) throws IOException {
+        String fileName = clientView.getSelectionModel().getSelectedItem();
+        net.write(new FileMessage(Path.of(pathToFileClient.getText()).resolve(fileName)));
+    }
+
+    public void downloadFromServer(ActionEvent actionEvent) throws Exception {
+        net.write(new DownloadMessage(
+                serverView.getSelectionModel().getSelectedItem()));
+    }
+
+    public void deleteFromServer(ActionEvent actionEvent) throws IOException {
+        net.write(new DeleteMessageFromServer(
+                serverView.getSelectionModel().getSelectedItem()));
+    }
+
+    public void deleteFromClient(ActionEvent actionEvent) throws IOException {
+        net.write(new DeleteMessageFromClient(
+                clientView.getSelectionModel().getSelectedItem()));
+    }
+
+    public void pathUpClient(ActionEvent actionEvent) throws IOException {
+        Path path = Paths.get(pathToFileClient.getText()).getParent();
+        if (path != null) {
+            pathToFileClient.setText(String.valueOf(path));
+            updateView(clientView, pathToFileClient);
+        }
+    }
+
+    public void pathUpServer(ActionEvent actionEvent) throws IOException {
+        Path path = Paths.get(pathToFileServer.getText()).getParent();
+        if (path != null) {
+            pathToFileServer.setText(String.valueOf(path));
+            updateView(serverView, pathToFileServer);
+
+        }
+    }
+
+    public void changeClientDisk(ActionEvent actionEvent) throws IOException {
+        ComboBox<String> a = (ComboBox<String>) actionEvent.getSource();
+        pathToFileClient.setText(a.getSelectionModel().getSelectedItem());
+        updateView(clientView, pathToFileClient);
+    }
+
+    public void changeServerDisk(ActionEvent actionEvent) throws IOException {
+        ComboBox<String> a = (ComboBox<String>) actionEvent.getSource();
+        pathToFileServer.setText(a.getSelectionModel().getSelectedItem());
+        updateView(serverView, pathToFileServer);
+    }
+
+    private void openDirectory(ListView<String> someView, TextField pathToDirectory) throws IOException {
+        someView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getClickCount() == 2) {
+                    Path path = Paths.get(pathToDirectory.getText())
+                            .resolve(someView.getSelectionModel().getSelectedItem());
+                    if (Files.isDirectory(path)) {
+                        try {
+                            pathToDirectory.setText(String.valueOf(path));
+                            updateView(someView, pathToDirectory);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    public void exitButton(ActionEvent actionEvent) {
+        Platform.exit();
     }
 }

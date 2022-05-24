@@ -1,45 +1,34 @@
 package com.geek.cloud.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
+import com.geek.cloud.model.AbstractMessage;
+import io.netty.handler.codec.serialization.ObjectDecoderInputStream;
+import io.netty.handler.codec.serialization.ObjectEncoderOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class Net {
 
     private final Socket socket;
-    private final DataInputStream is;
-    private final DataOutputStream os;
+    private final ObjectDecoderInputStream is;
+    private final ObjectEncoderOutputStream os;
+
     private final String host;
     private final int port;
 
     public Net(String host, int port) throws IOException {
         this.host = host;
         this.port = port;
-        socket = new Socket(host, port);
-        is = new DataInputStream(socket.getInputStream());//read from socket
-        os = new DataOutputStream(socket.getOutputStream());//write to socket
+            socket = new Socket(host, port);
+        os = new ObjectEncoderOutputStream(socket.getOutputStream());
+        is = new ObjectDecoderInputStream(socket.getInputStream());
     }
 
-    public Long readLong() throws IOException {
-        return is.readLong();
+    public AbstractMessage read() throws Exception {
+        return (AbstractMessage) is.readObject();
     }
 
-    public String readUtf() throws IOException {
-        return is.readUTF();
-    }
-
-    public void writeLong(int n) throws IOException {
-        os.writeLong(n);
-    }
-
-    public void writeUtf(String str) throws IOException {
-        os.writeUTF(str);
-    }
-
-    public DataOutput getOs () {
-        return os;
+    public void write(AbstractMessage message) throws IOException {
+        os.writeObject(message);
+        os.flush();
     }
 }
-

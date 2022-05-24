@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>geek-cloud-application</artifactId>
-        <groupId>com.geek.cloud</groupId>
-        <version>1</version>
+        <artifactId>com.geek.cloud</artifactId>
+        <groupId>geek-cloud-application</groupId>
+        <version>1.SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,19 +16,15 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
-    <build>
-        <plugins>
-
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>19-ea+4</version>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx -->
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx</artifactId>
@@ -36,6 +32,11 @@
             <type>pom</type>
         </dependency>
 
+        <dependency>
+            <groupId>geek-cloud-application</groupId>
+            <artifactId>geek-cloud-core</artifactId>
+            <version>1.SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>
